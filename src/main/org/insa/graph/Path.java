@@ -29,9 +29,57 @@ public class Path {
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
+            
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        List<Arc> arcsTemp = new ArrayList<Arc>();
+        
+        int i=0,test=0;
+        int size = nodes.size();
+        double minTime=0;
+        Arc Temp1=null;
+        
+        
+        if(!(nodes.isEmpty())) { 
+        	if(nodes.size()==1) {
+        		return  new Path(graph , nodes.get(0));
+        	}
+                
+        for(i=0;i<size-1;i++) {
+        arcsTemp=nodes.get(i).getSuccessors();
+        test=0;
+             for(Arc arc : arcsTemp){
+            	
+        	 
+            	 if(arc.getDestination().getId()==(nodes.get(i+1).getId())) {
+        	    	if(test==0) {
+        	    		minTime=arc.getMinimumTravelTime();
+        	    		Temp1=arc;
+        	    		test++;
+        	    	}else if(minTime>arc.getMinimumTravelTime()) {
+        	    		 Temp1=arc;	
+        	    		 minTime=arc.getMinimumTravelTime();
+        	    		}
+        	    		
+        	      }
+        	 }
+             if(Temp1==null) {
+            	 throw new IllegalArgumentException("Erreur");
+             }else {
+             arcs.add(i, Temp1);
+             }
+             
+       }
+        	
         return new Path(graph, arcs);
+    
+   }else {
+   
+	   return new Path(graph);	
+    
+   }
+        
+        
+        
     }
 
     /**
@@ -51,8 +99,51 @@ public class Path {
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        List<Arc> arcsTemp = new ArrayList<Arc>();
+        
+        int i=0,test=0;
+        int size = nodes.size();
+        double minLenght=0;
+        Arc Temp1=null;
+        
+        
+        if(!(nodes.isEmpty())) { 
+        	if(nodes.size()==1) {
+        		return  new Path(graph , nodes.get(0));
+        	}
+        
+        for(i=0;i<size-1;i++) {
+            arcsTemp=nodes.get(i).getSuccessors();
+            test=0;
+              for(Arc arc : arcsTemp){
+            	 if(arc.getDestination()==(nodes.get(i+1))) {
+            	    	if(test==0) {
+            	    		minLenght=arc.getLength();
+            	    		Temp1=arc;
+            	    		test++;
+            	    	}else if(minLenght>arc.getLength()) {
+            	    		 Temp1=arc;	
+            	    		 minLenght=arc.getLength();
+            	    		}
+            	    		
+            	    	}
+        }
+             if(Temp1==null) {
+                	 throw new IllegalArgumentException("Erreur");
+             }else {
+                 arcs.add(i, Temp1);
+             }
+                 
+        }
+            	
+        
+        
         return new Path(graph, arcs);
+        
+    }else {
+    	return new Path(graph);
+    }
+       
     }
 
     /**
@@ -197,9 +288,33 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public boolean isValid() {
-        // TODO:
-        return false;
-    }
+    	boolean bool=true;
+    	 int i=0;
+    	 
+        if((this.isEmpty() || (this.size()==1 && this.arcs.isEmpty()))) {
+        	return true;
+        }
+        if( !(this.arcs.get(0).getOrigin()==(this.origin)))
+        {
+        	return false;
+        }
+      	 
+        while(bool==true && i<this.size()-2 ){
+
+        	if(this.arcs.get(i).getDestination()==this.arcs.get(i+1).getOrigin()) {
+            		 bool=true;
+            	 }else {
+            		 bool=false;
+            	 }
+         i++;
+         }
+             
+            
+         return bool;
+        	
+        
+        }
+    
 
     /**
      * Compute the length of this path (in meters).
@@ -208,11 +323,18 @@ public class Path {
      * 
      * @deprecated Need to be implemented.
      */
+    
     public float getLength() {
-        // TODO:
-        return 0;
+        
+    	float Length=0;
+    	List<Arc> arcs = this.getArcs();
+    	for (Arc Liste_arcs : arcs ) {
+    		
+    		Length=Length+Liste_arcs.getLength();
+    	}
+    	
+        return Length;
     }
-
     /**
      * Compute the time required to travel this path if moving at the given speed.
      * 
@@ -223,9 +345,15 @@ public class Path {
      * 
      * @deprecated Need to be implemented.
      */
-    public double getTravelTime(double speed) {
-        // TODO:
-        return 0;
+   public double getTravelTime(double speed) {
+        
+    	double travelTime=0;
+        List<Arc> arcs = this.getArcs();
+        for(Arc Liste_arcs : arcs) {
+        	travelTime=travelTime+Liste_arcs.getTravelTime(speed);
+        }
+        
+        return travelTime;
     }
 
     /**
@@ -236,9 +364,15 @@ public class Path {
      * 
      * @deprecated Need to be implemented.
      */
-    public double getMinimumTravelTime() {
-        // TODO:
-        return 0;
-    }
+   public double getMinimumTravelTime() {
+	      
+   	double minTravel=0;
+       List<Arc> arcs = this.getArcs();
+       
+       for(Arc Liste_arc : arcs ) {
+       	minTravel=minTravel+Liste_arc.getMinimumTravelTime();
+       }
+       return minTravel;
+   }
 
 }

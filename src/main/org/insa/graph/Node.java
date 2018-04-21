@@ -111,6 +111,11 @@ public final class Node implements Comparable<Node>, Iterable<Arc> {
     public Iterator<Arc> iterator() {
         return Collections.unmodifiableList(this.successors).iterator();
     }
+   
+    
+    public ArrayList<Arc> getSuccessors(){
+    	return this.successors;
+    }
 
     /**
      * @return Location of this node.
