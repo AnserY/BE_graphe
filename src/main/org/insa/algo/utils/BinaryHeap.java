@@ -25,6 +25,8 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
 
     // The heap array.
     private final ArrayList<E> array;
+    
+  
 
     /**
      * Construct a new empty binary heap.
@@ -144,7 +146,35 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
 
     @Override
     public void remove(E x) throws ElementNotFoundException {
-        // TODO:
+
+    
+    	if (!this.array.contains(x)) {
+			throw new ElementNotFoundException(x);
+		} else {
+
+			int Index = this.array.indexOf(x);
+			if (Index > this.currentSize - 1) {
+				throw new ElementNotFoundException(x);
+			} else if (Index == this.currentSize - 1) {
+				this.currentSize--;
+			} else {
+				this.array.add(this.array.get(Index));
+				this.arraySet(Index, this.array.get(this.currentSize - 1));
+				this.array.remove(this.currentSize - 1);
+				this.currentSize--;
+
+				if (this.array.get(this.index_parent(Index)).compareTo(this.array.get(Index)) <= 0) {
+					this.percolateDown(Index);
+				} else {
+					this.percolateUp(Index);
+				}
+
+			}
+
+		}
+    	
+    	
+    		
     }
 
     @Override

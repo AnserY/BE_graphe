@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 import org.insa.graph.Graph;
 import org.insa.graph.Path;
 import org.insa.graph.io.BinaryGraphReader;
+import org.insa.graph.io.BinaryPathReader;
 import org.insa.graph.io.GraphReader;
 import org.insa.graph.io.PathReader;
 import org.insa.graphics.drawing.Drawing;
@@ -23,8 +24,6 @@ public class Launch {
      * Create a new Drawing inside a JFrame an return it.
      * 
      * @return The created drawing.
-     * 
-     * @throws Exception if something wrong happens when creating the graph.
      */
     public static Drawing createDrawing() throws Exception {
         BasicDrawing basicDrawing = new BasicDrawing();
@@ -46,8 +45,8 @@ public class Launch {
     public static void main(String[] args) throws Exception {
 
         // Visit these directory to see the list of available files on Commetud.
-        String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
-        String pathName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Paths/path_fr31insa_rangueil_r2.path";
+        String mapName = "/home/anser/Downloads/europe/belgium.mapgr";
+        String pathName = "/home/anser/Downloads/path_be_173101_302442.path";
 
         // Create a graph reader.
         GraphReader reader = new BinaryGraphReader(
@@ -55,20 +54,21 @@ public class Launch {
 
         // TODO: Read the graph.
         Graph graph = null;
-
+        graph=reader.read();
+        
         // Create the drawing:
         Drawing drawing = createDrawing();
 
         // TODO: Draw the graph on the drawing.
-
-        // TODO: Create a PathReader.
+         drawing.drawGraph(graph);
+        
+         // TODO: Create a PathReader.
         PathReader pathReader = null;
-
-        // TODO: Read the path.
+        pathReader = new BinaryPathReader( new DataInputStream ( new BufferedInputStream(new FileInputStream(pathName))));
+             
         Path path = null;
 
-        // TODO: Draw the path.
-
+        path = pathReader.readPath(graph);
     }
 
 }
