@@ -27,7 +27,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
 
 		// Initialize array of distances.
 		double[] distances = new double[nbNodes];
-		//Mettre toutes les distances a INFINI
+		//Mettre toutes les distances à INFINI
 		Arrays.fill(distances, Double.POSITIVE_INFINITY);
 		distances[data.getOrigin().getId()] = 0;
 
