@@ -6,6 +6,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         super(data);
     }
 
+    
+    //BinaryHeap
+    
     @Override
     protected ShortestPathSolution doRun() {
         ShortestPathData data = getInputData();
