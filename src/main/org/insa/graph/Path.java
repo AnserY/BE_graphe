@@ -249,6 +249,7 @@ public class Path {
      * @return List of arcs in the path.
      */
     public List<Arc> getArcs() {
+    	
         return Collections.unmodifiableList(arcs);
     }
 
