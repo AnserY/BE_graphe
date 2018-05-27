@@ -1,11 +1,18 @@
 package org.insa.algo.shortestpath;
 
 
-import java.util.ArrayList;
+import java.util.*;
+
+import java.util.Map.Entry;
+
+
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.insa.graph.*;
+import org.insa.algo.AbstractSolution.Status;
 import org.insa.algo.utils.BinaryHeap;
+
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
     public DijkstraAlgorithm(ShortestPathData data) {
@@ -13,7 +20,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     }
 
     
-    //BinaryHeap
+   
     
     @Override
     protected ShortestPathSolution doRun() {
@@ -22,50 +29,101 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         Graph graph = data.getGraph();
         int nbrNodes = graph.size();
-        BinaryHeap<Node> tas = new BinaryHeap<Node>();
+        int k=0,j=0,f=0;
+        
+        BinaryHeap<Label> tas = new BinaryHeap<Label>();
         ArrayList<Arc> succ = new ArrayList<Arc>();
-        Node NodeMin;
+        Label LabelMin;
         
-        Label label[] = new Label[nbrNodes];
+        Map<Node,Integer> HM = new HashMap<>();
+        
+        Label label[]= new Label[nbrNodes];
+           
+        
+        
         for(int i=0 ; i<nbrNodes;i++) {
-        	label[i]=new Label(i);
-        	label[i].setMarque(false);
-        	label[i].setCout(Double.POSITIVE_INFINITY);
-        	label[i].setPère(0);
+        	HM.put(graph.get(i), i);
+        	label[i]= new Label(i,false,Double.POSITIVE_INFINITY,null,graph.get(i));
+        	
         }
-        label[0].setCout(0);
-        tas.insert(graph.get(0));
-     
-         while(!label[data.getDestination().getId()].getMarque() || !tas.isEmpty()) {
+       
+
+        label[HM.get(data.getOrigin())].setCout(0);
+        tas.insert(label[HM.get(data.getOrigin())]);
+        notifyOriginProcessed(data.getOrigin());
         
-        	 NodeMin=tas.deleteMin();
-        	 label[NodeMin.getId()].setMarque(true);
-             succ = NodeMin.getSuccessors();
-             for(Arc arc : succ) {
-            	 double coutY,coutX,w;
+        
+       
+        while(!label[HM.get(data.getDestination())].getMarque() && !tas.isEmpty()) {
+        	
+        
+        	 LabelMin=tas.deleteMin();
+        	 
+        	 label[LabelMin.getsommetCourant()].setMarque(true);
+        	 //System.out.println(label[LabelMin.getsommetCourant()].getCout());
+        	 notifyNodeMarked(LabelMin.getNode());
+        	 
+        	 succ = LabelMin.getNode().getSuccessors();
+             
+            for(Arc arc : succ) {
+            
+            	double coutY,coutX,w,tempCout;
             	 w = data.getCost(arc);
-            	 coutY=label[arc.getDestination().getId()].getCout();
-            	 coutX=label[arc.getOrigin().getId()].getCout();
-            	 
-            	 if(!label[arc.getDestination().getId()].getMarque()) {
-            		 
-            		 //label[arc.getDestination().getId()].setCout(Min(label[arc.getDestination().getId()].getCout(),data.getCost(arc)));
             	
-            		 if(coutY>)
+            	 coutY=label[HM.get(arc.getDestination())].getCout();
+            	 
+            	 notifyNodeReached(arc.getDestination());
+            	 
+            	 coutX=label[HM.get(arc.getOrigin())].getCout();
+            	 
+            	 if(!label[HM.get(arc.getDestination())].getMarque()) {
+            		 
+            		 
+            		if(coutY>coutX+w) {
+            			 
+            			 tempCout=coutY;
+            			 coutY=coutX+w;
+            			 label[HM.get(arc.getDestination())].setCout(coutY);
+            			 label[HM.get(arc.getDestination())].setArcPredec(arc);
+            			 label[HM.get(arc.getDestination())].setPère(arc.getOrigin());
+            			 
+            			 
+            			 if(tempCout==Double.POSITIVE_INFINITY) {
+            				 tas.insert(label[HM.get(arc.getDestination())]);
+            			 }
+            			 else {
+            				 tas.remove(label[HM.get(arc.getDestination())]);
+            				 tas.insert(label[HM.get(arc.getDestination())]);
+            			 }
+            		 }
             	 }
             	 
             	 
-            	 
+            	++j; 
              }
-        
+        ++k;
         
         }
-        return solution;
+        //System.out.println("le nombre d'iteration :"+(k+j));
+     	solution = null;
+     	if(label[HM.get(data.getDestination())].getArcPrede() == null) {
+     		solution = new ShortestPathSolution(data, Status.INFEASIBLE);
+     	}else {
+     		notifyDestinationReached(data.getDestination());
+     		ArrayList<Arc> arcs = new ArrayList<>();
+			Node tempNode = data.getDestination();
+			while (label[HM.get(tempNode)].getPère() != null) {
+				++f;
+				arcs.add(label[HM.get(tempNode)].getArcPrede() );
+				tempNode = label[HM.get(tempNode)].getPère();
+			}
+           //System.out.println("le nombre d'arc :"+f);
+			Collections.reverse(arcs);
+			solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
+
+     	 }
+        return solution ;
     }
     
-    private double Min(double y , double x) {
-    	double res = (y >= x) ? x : y;
-    	return res;
-    }
-
+    
 }

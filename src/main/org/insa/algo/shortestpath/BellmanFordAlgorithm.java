@@ -1,6 +1,7 @@
 package org.insa.algo.shortestpath;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Collections;
 
